@@ -30,25 +30,42 @@ public class CompraTest {
 				"  </produtos>\n"+
 			    "</compra>";
 		
-		Produto geladeira = new Produto("geladeira", 1000.0, "geladeira de duas portas", 1587);
-		Produto ferro = new Produto("ferro de passar", 100.0, "ferro com vaporizador", 1588);
+		Compra compra = compraComGeladeiraEFerro();
 		
-		List<Produto> produtos = new ArrayList<>();
-		produtos.add(geladeira);
-		produtos.add(ferro);
-		Compra compra = new Compra(15, produtos);
-		
-		
-		XStream xstream = new XStream();
-		xstream.alias("produto", Produto.class);
-		xstream.alias("compra", Compra.class);
-		xstream.aliasField("descrição", Produto.class, "descricao");
-		xstream.useAttributeFor(Produto.class, "codigo");
+		XStream xstream = xstreamParaCompraEProduto();
 		
 		String xmlGerado = xstream.toXML(compra);
 		assertEquals(xmlEsperado, xmlGerado);
 		
 		/*Transformando XML em Objeto JAVA*/
+	}
+
+	private XStream xstreamParaCompraEProduto() {
+		XStream xstream = new XStream();
+		xstream.alias("produto", Produto.class);
+		xstream.alias("compra", Compra.class);
+		xstream.aliasField("descrição", Produto.class, "descricao");
+		xstream.useAttributeFor(Produto.class, "codigo");
+		return xstream;
+	}
+
+	private Compra compraComGeladeiraEFerro() {
+		Produto geladeira = geladeira();
+		Produto ferro = ferro();
+		
+		List<Produto> produtos = new ArrayList<>();
+		produtos.add(geladeira);
+		produtos.add(ferro);
+		Compra compra = new Compra(15, produtos);
+		return compra;
+	}
+
+	private Produto ferro() {
+		return new Produto("ferro de passar", 100.0, "ferro com vaporizador", 1588);
+	}
+
+	private Produto geladeira() {
+		return new Produto("geladeira", 1000.0, "geladeira de duas portas", 1587);
 	}
 		
 		@Test
@@ -69,19 +86,9 @@ public class CompraTest {
 					"  </produtos>\n"+
 				    "</compra>";
 			
-			Produto geladeira = new Produto("geladeira", 1000.0, "geladeira de duas portas", 1587);
-			Produto ferro = new Produto("ferro de passar", 100.0, "ferro com vaporizador", 1588);
+			Compra compraEsperada = compraComGeladeiraEFerro();
 			
-			List<Produto> produtos = new ArrayList<>();
-			produtos.add(geladeira);
-			produtos.add(ferro);
-			Compra compraEsperada = new Compra(15, produtos);
-			
-			XStream xstream = new XStream();
-			xstream.alias("produto", Produto.class);
-			xstream.alias("compra", Compra.class);
-			xstream.aliasField("descrição", Produto.class, "descricao");
-			xstream.useAttributeFor(Produto.class, "codigo");
+			XStream xstream = xstreamParaCompraEProduto();
 			
 			Compra compraDeserializada = (Compra)xstream.fromXML(xmlDeOrigem);
 			
